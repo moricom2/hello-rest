@@ -2,10 +2,10 @@
 
 1. git clone https://github.com/moricom2/hello-rest.git
 2. cd hello-rest
-3. vi src/main/java/com/example/hellorest/index/IndexController.java
-4. mvn clean package -DskipTests=true
-5. docker build -t moricom/hello-rest .
-6. docker push moricom/hello-rest
+( vi src/main/java/com/example/hellorest/index/IndexController.java )
+3. mvn clean package -DskipTests=true
+4. docker build -t moricom/hello-rest .
+5. docker push moricom/hello-rest
 
 
 

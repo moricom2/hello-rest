@@ -8,10 +8,14 @@ node {
 	stage('3. Source Code JunitTest'){
 		sh 'mvn surefire-report:report'
 	}            
-	stage('4. Container Build'){
+	stage('4. Container Image Build'){
 		sh 'docker build -t moricom/hello-rest .'
-	}  
-	stage('5. Container Running'){
+	}  	
+	stage('5. Container Image Push'){
+		sh 'docker login -u moricom --password-stdin < ~/docker-pass'
+		sh 'docker push moricom/hello-rest'
+	}  	
+	stage('6. Container Running'){
 		def containerID = sh (script: 'docker ps -aq -f name=hello-rest', returnStdout: true)
 		if (containerID != '') {
 			sh 'docker stop ' + containerID

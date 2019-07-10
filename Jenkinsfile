@@ -20,6 +20,6 @@ node {
 		if (containerID != '') {
 			sh 'docker stop ' + containerID
 		}
-		sh 'docker run -d -p 80:80 --rm --name hello-rest moricom/hello-rest'
+		sh 'docker run -d -p 81:80 --rm --name hello-rest moricom/hello-rest'
 	}
 }

@@ -8,14 +8,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 //@Controller
 public class IndexController {
-	
-//	@RequestMapping("/")
-//	public String index() {
-//		return "index.html";
-//	}
-	
+
+	//	@RequestMapping("/")
+	//	public String index() {
+	//		return "index.html";
+	//	}
+
 	@GetMapping("/")
 	public String index() {
-		return "Hello, Boot!";
+		return "Hello, Boot! " + System.getenv("HOSTNAME");
 	}
 }

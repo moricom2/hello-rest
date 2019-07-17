@@ -2,8 +2,9 @@ node {
 	def dockerID = "moricom"
 	def imgName = "moricom/hello-rest:latest"
 	def appName = "hello-rest"
+	def gitURL = "https://github.com/moricom2/hello-rest.git"
 	stage('1. Source Code Pull'){
-		git branch:'master', url:'http://192.168.50.163/cone/hello-rest.git'
+		git branch:'master', url:gitURL
 	}
 	stage('2. Source Code Package'){
 		sh 'mvn clean package -DskipTests=true'

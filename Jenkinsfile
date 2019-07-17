@@ -15,11 +15,11 @@ node {
 	stage('4. Container Image Build'){
 		sh 'docker build -t ' + imgName + ' .'
 	}  	
-	stage('5. Container Image Push'){
+	stage('5. Container Image Share'){
 		sh 'docker login -u ' + dockerID + ' --password-stdin < ~/docker-pass'
 		sh 'docker push ' + imgName
 	}  	
-	stage('6. Container Running'){
+	stage('6. Container Run'){
 		def containerID = sh (script: 'docker ps -aq -f name=' + appName, returnStdout: true)
 		if (containerID != '') {
 			sh 'docker rm -f ' + containerID

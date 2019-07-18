@@ -1,5 +1,4 @@
-# Docker-ce (ssh root@192.168.56.101)
-
+# Docker-ce
 # springboot hello-rest
 
 1. git clone https://github.com/moricom2/hello-rest.git

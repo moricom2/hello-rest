@@ -13,7 +13,7 @@ node {
 	stage('3. Source Code JunitTest'){
 		sh 'mvn surefire-report:report'
 	}
-	stage('4. Soce Code Analysis'){ 
+	stage('4. Soce Code Analysis'){
 	    sh 'mvn sonar:sonar -Dsonar.host.url=' + sonarURL + ' -Dsonar.projectKey=' + appName + ' -Dsonar.projectName=' + appName + ' -Dsonar.sources=./src/main/java -Dsonar.java.binaries=./target/classes -Dsonar.junit.reportPaths=./target/surefire-reports -DskipTests=true'
 	}            
 	stage('5. Container Image Build'){

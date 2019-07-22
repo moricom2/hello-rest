@@ -3,6 +3,7 @@ node {
 	def imgName = "moricom/hello-rest:latest"
 	def appName = "hello-rest"
 	def gitURL = "https://github.com/moricom2/hello-rest.git"
+	def sonarURL = "http://192.168.99.100:9000"
 	stage('1. Source Code Pull'){
 		git branch:'master', url:gitURL
 	}
@@ -11,15 +12,18 @@ node {
 	}
 	stage('3. Source Code JunitTest'){
 		sh 'mvn surefire-report:report'
+	}
+	stage('4. Soce Code Analysis'){
+	    sh 'mvn sonar:sonar -Dsonar.host.url=' + sonarURL + ' -Dsonar.projectKey=' + appName + ' -Dsonar.projectName=' + appName + ' -Dsonar.sources=./src/main/java -Dsonar.java.binaries=./target/classes -Dsonar.junit.reportPaths=./target/surefire-reports -DskipTests=true'
 	}            
-	stage('4. Container Image Build'){
+	stage('5. Container Image Build'){
 		sh 'docker build -t ' + imgName + ' .'
 	}  	
-	stage('5. Container Image Share'){
+	stage('6. Container Image Share'){
 		sh 'docker login -u ' + dockerID + ' --password-stdin < ~/docker-pass'
 		sh 'docker push ' + imgName
 	}  	
-	stage('6. Container Run'){
+	stage('7. Container Run'){
 		def containerID = sh (script: 'docker ps -aq -f name=' + appName, returnStdout: true)
 		if (containerID != '') {
 			sh 'docker rm -f ' + containerID

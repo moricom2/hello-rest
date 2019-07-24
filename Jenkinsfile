@@ -1,7 +1,7 @@
 node {
 	def imgName = "localhost:5000/hello-rest:latest"
 	def appName = "hello-rest"
-	def gitURL = "https://192.168.99.100/root/hello-rest.git"
+	def gitURL = "http://192.168.99.100/bi/hello-rest.git"
 	def sonarURL = "http://192.168.99.100:9000"
 	stage('1. Source Code Pull'){
 		git branch:'master', url:gitURL

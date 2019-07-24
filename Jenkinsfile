@@ -1,8 +1,7 @@
 node {
-	def dockerID = "moricom"
-	def imgName = "moricom/hello-rest:latest"
+	def imgName = "localhost:5000/hello-rest:latest"
 	def appName = "hello-rest"
-	def gitURL = "https://github.com/moricom2/hello-rest.git"
+	def gitURL = "https://192.168.99.100/root/hello-rest.git"
 	def sonarURL = "http://192.168.99.100:9000"
 	stage('1. Source Code Pull'){
 		git branch:'master', url:gitURL
@@ -20,7 +19,6 @@ node {
 		sh 'docker build -t ' + imgName + ' .'
 	}  	
 	stage('6. Container Image Share'){
-		sh 'docker login -u ' + dockerID + ' --password-stdin < ~/docker-pass'
 		sh 'docker push ' + imgName
 	}  	
 	stage('7. Container Run'){
@@ -28,6 +26,6 @@ node {
 		if (containerID != '') {
 			sh 'docker rm -f ' + containerID
 		}
-		sh 'docker run -d -p 80:80 --rm --name ' + appName + ' ' + imgName
+		sh 'docker run -d -p 88:80 --rm --name ' + appName + ' ' + imgName
 	}
 }

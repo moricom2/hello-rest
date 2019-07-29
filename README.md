@@ -15,3 +15,13 @@ https://hub.docker.com/r/moricom/hello-rest
 
 1. docker pull moricom/hello-rest
 2. docker run -d -p 80:80 --rm --name hello-rest moricom/hello-rest
+
+
+
+# gitLab Runner
+> #docker run -d --name runner1 --net=devtools_default -v /var/run/docker.sock:/var/run/docker.sock -v /data/runner1/gitlab-runner/config:/etc/gitlab-runner gitlab/gitlab-runner:latest  
+> docker run -d --name runner1 --net=devtools_default -v /var/run/docker.sock:/var/run/docker.sock -v /etc/docker/daemon.json:/etc/docker/daemon.json gitlab/gitlab-runner:latest  
+
+> docker exec -it runner1 bash  
+>> gitlab-runner register  
+

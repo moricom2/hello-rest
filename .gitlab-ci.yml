@@ -1,0 +1,99 @@
+image: maven:3-jdk-8
+  
+stages:
+  - build
+  - test
+  - quality
+  - package
+  - deploy
+
+before_script:
+  - export    
+    
+variables:
+  MAVEN_OPTS: "-Djava.awt.headless=true -Dmaven.repo.local=./.m2/repository"
+  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
+  SONAR_HOST_URL: "http://192.168.99.100:9000"
+  SONAR_PROJECT_NAME: "$CI_PROJECT_PATH"
+  
+cache:
+  # keep cache across branch
+  key: "$CI_BUILD_REF_NAME"
+  paths:
+    - ./.m2/repository
+    - ./target  
+
+Code-Build:
+  stage: build
+  script:
+    - "mvn clean compile $MAVEN_CLI_OPTS"
+  only:
+    - master
+
+Code-Package:
+  stage: test
+  dependencies:
+    - Code-Build
+  script:
+    - "mvn package -DskipTests=true $MAVEN_CLI_OPTS"
+  artifacts:
+    paths:
+      - target/      
+  only:
+    - master    
+    
+Code-JunitTest:
+  stage: test
+  dependencies:
+    - Code-Build
+  script: 
+    - "mvn surefire-report:report $MAVEN_CLI_OPTS"
+  only:
+    - master
+    
+Code Analysis:
+  stage: quality
+  dependencies:
+    - Code-Package
+    - Code-JunitTest
+  script: 
+    - "mvn sonar:sonar -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.projectKey=$SONAR_PROJECT_NAME -Dsonar.projectName=$SONAR_PROJECT_NAME -Dsonar.sources=./src/main/java -Dsonar.java.binaries=./target/classes -Dsonar.junit.reportPaths=./target/surefire-reports -DskipTests=true $MAVEN_CLI_OPTS"
+  only:
+    - master
+
+Docker-Build:
+  image: docker:latest
+  stage: package
+  dependencies:
+    - Code-Package
+  script: 
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID .
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - docker push $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
+  only:
+    - master
+
+Deploy-Staging:
+  image: docker:latest
+  stage: deploy
+  script: 
+    - ID=$(docker ps -aq -f name="dev-$CI_PROJECT_NAME") && [[ -n $ID ]] && docker stop $ID && docker rm $ID
+    - docker run -d -p 88:80 --name dev-$CI_PROJECT_NAME $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
+  environment:
+    name: staging
+    url: http://192.168.99.100:88
+  only:
+    - master
+    
+Deploy-Product:
+  image: docker:latest
+  stage: deploy
+  script: 
+    - ID=$(docker ps -aq -f name="prod-$CI_PROJECT_NAME") && [[ -n $ID ]] && docker stop $ID && docker rm $ID
+    - docker run -d -p 81:80 --name prod-$CI_PROJECT_NAME $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
+  environment:
+    name: production
+    url: http://192.168.99.100:81
+  when: manual    
+  only:
+    - master

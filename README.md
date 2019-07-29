@@ -24,6 +24,6 @@ https://hub.docker.com/r/moricom/hello-rest
 
 > docker run -d --name gitlab-runner -v /var/run/docker.sock:/var/run/docker.sock -v /etc/docker/daemon.json:/etc/docker/daemon.json gitlab/gitlab-runner:latest  
 
-> docker exec -it runner1 bash  
+> docker exec -it gitlab-runner bash  
 >> gitlab-runner register  
 

@@ -15,6 +15,8 @@ variables:
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
   SONAR_HOST_URL: "http://192.168.99.100:9000"
   SONAR_PROJECT_NAME: "$CI_PROJECT_PATH"
+  APP_DEV_URL: "http://192.168.99.100:88"
+  APP_PROD_URL: "http://192.168.99.100:81"
   
 cache:
   # keep cache across branch
@@ -81,7 +83,7 @@ Deploy-Staging:
     - docker run -d -p 88:80 --name dev-$CI_PROJECT_NAME $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
   environment:
     name: staging
-    url: http://192.168.99.100:88
+    url: $APP_DEV_URL
   only:
     - master
     
@@ -93,7 +95,7 @@ Deploy-Product:
     - docker run -d -p 81:80 --name prod-$CI_PROJECT_NAME $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
   environment:
     name: production
-    url: http://192.168.99.100:81
+    url: $APP_PROD_URL
   when: manual    
   only:
     - master
